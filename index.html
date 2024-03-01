@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    
+  </head>
+  <body>
+    <h1>Sistema de Pagos:</h1>
+    <div>
+      <input id="name" type="text" />
+      <input id="amount" type="number" />
+      <button id="buttonAction">Ordenar</button>
+    </div>
+    <script type="module">
+      import { io } from "https://cdn.socket.io/4.7.4/socket.io.esm.min.js";
+      const socket = io("http://34.197.198.226:8080");
+      socket.on("showClient", (orden) => {
+        console.log(orden);
+        alert("Pago realizado: " + JSON.stringify(orden));
+      });
+
+      async function postOrder() {
+        try {
+          const name = document.getElementById("name").value;
+          const amount = document.getElementById("amount").value;
+          if (name != "" && amount != "") {
+            console.log(name)
+            const data = {
+              body: {
+                name: name,
+                status: "pending",
+                amount: amount,
+              },
+            };
+            alert("Pago a realizar: " + JSON.stringify(data));
+            const response = await fetch("http://44.217.84.16:3000/rex/order", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+          } else {
+            alert("Debes llenar todos los campos");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      const button = document.getElementById("buttonAction")
+      button.addEventListener("click", postOrder);
+    </script>
+  </body>
+</html>
